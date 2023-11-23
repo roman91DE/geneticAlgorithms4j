@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Solution {
 
     private static final Random random = new Random();
+
     private final int minValue;
     private final int maxValue;
     private final int[] chromosome;
@@ -28,6 +29,13 @@ public class Solution {
         this.fitness = null;
     }
 
+    public Solution(int[] chromosome, Solution prototype) {
+        this.minValue = prototype.getMinValue();
+        this.maxValue = prototype.getMaxValue();
+        this.chromosome = chromosome;
+        this.fitness = null;
+    }
+
     public int getLength() {
         return this.chromosome.length;
     }
@@ -36,8 +44,22 @@ public class Solution {
         return this.chromosome;
     }
 
-    public double getFitness() {
+    public double getFitness() throws IllegalStateException{
+        if (this.fitness == null) {
+            throw new IllegalStateException("Fitness has not been computed yet");
+        }
         return this.fitness;
+    }
+    public int getMinValue() {
+        return this.minValue;
+    }
+
+    public int getMaxValue() {
+        return this.maxValue;
+    }
+
+    public void computeFitness(FitnessFunction fitnessFunction) {
+        this.fitness = fitnessFunction.evaluate(this);
     }
 
     public String toString() {
