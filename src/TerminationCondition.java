@@ -1,3 +1,3 @@
 public interface TerminationCondition {
-    public boolean isTerminated();
+    public boolean isTerminated(GeneticAlgorithm geneticAlgorithm);
 }
