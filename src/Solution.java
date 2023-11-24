@@ -69,13 +69,14 @@ public class Solution {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("[");
+        sb.append("Solution=[");
         for (int i = 0; i < this.getLength(); i++) {
             sb.append(this.chromosome[i]);
             sb.append(",");
         }
         sb.deleteCharAt(sb.length() - 1);
-        sb.append("]");
+        sb.append("]\n");
+        sb.append("Fitness=").append(this.fitness.toString());
         return sb.toString();
     }
 

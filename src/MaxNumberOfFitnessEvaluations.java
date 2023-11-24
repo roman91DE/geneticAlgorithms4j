@@ -5,6 +5,6 @@ public class MaxNumberOfFitnessEvaluations implements TerminationCondition{
     }
     @Override
     public boolean isTerminated(GeneticAlgorithm geneticAlgorithm) {
-        return geneticAlgorithm.numberOfFitnessEvaluations >= this.maxNumberOfFitnessEvaluations;
+        return geneticAlgorithm.getNumberOfFitnessEvaluations() >= this.maxNumberOfFitnessEvaluations;
     }
 }

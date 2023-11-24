@@ -1,9 +1,7 @@
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Random;
 
-public class simpleEA implements GeneticAlgorithm{
+public class simpleGA implements GeneticAlgorithm{
     private final int populationSize;
     private final int chromosomeLength;
     private final int minValue;
@@ -18,10 +16,10 @@ public class simpleEA implements GeneticAlgorithm{
     private final MutationOperator mutationOperator;
     private final TerminationCondition terminationCondition;
     private Population population;
+    private Solution bestSolution;
     private int currentGeneration;
     private int numberOfFitnessEvaluations;
-    private final ArrayList<Solution> archivePopulation;
-    public simpleEA(
+    public simpleGA(
             int populationSize,
             int chromosomeLength,
             int minValue,
@@ -41,13 +39,24 @@ public class simpleEA implements GeneticAlgorithm{
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
         this.terminationCondition = terminationCondition;
-        this.archivePopulation = new ArrayList<>();
+        this.bestSolution = null;
         if (outputStream != null) {
             this.outputStream = outputStream;
         }
 
 
     }
+
+    @Override
+    public int getCurrentGeneration() {
+        return this.currentGeneration;
+    }
+
+    @Override
+    public int getNumberOfFitnessEvaluations() {
+        return this.numberOfFitnessEvaluations;
+    }
+
     @Override
     public void run() {
         this.population = new Population(this.populationSize, this.minValue, this.maxValue, this.chromosomeLength);
@@ -58,7 +67,11 @@ public class simpleEA implements GeneticAlgorithm{
             this.currentGeneration++;
             this.numberOfFitnessEvaluations += this.population.computeMissingFits(this.fitnessFunction);
             this.population.sortPopulation();
-            this.archivePopulation.add(this.population.getSolution(0));
+
+            if (this.bestSolution == null || this.population.getSolution(0).getFitness() > this.bestSolution.getFitness()) {
+                this.bestSolution = this.population.getSolution(0);
+            }
+
             this.outputStream.println(this.currentGeneration + "\t" + this.numberOfFitnessEvaluations + "\t" + this.population.getBestFitness() + "\t" + this.population.getAverageFitness() + "\t" + this.population.getStdDeviationFitness());
 
             Population breedingPopulation = selectionOperator.select(this.population, this.populationSize);
@@ -80,5 +93,9 @@ public class simpleEA implements GeneticAlgorithm{
                 }
             this.population = new Population(offspringSolutions);
             }
+        this.population.computeMissingFits(this.fitnessFunction);
+        this.population.sortPopulation();
+
+        this.outputStream.println(this.bestSolution.toString());
         }
     }
