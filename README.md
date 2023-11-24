@@ -11,6 +11,7 @@ This is a simple library for genetic algorithms in Java. It is designed to be ea
 The following code shows how to run a simple genetic algorithm built with some sample components included in the library.
 
 ```java
+import com.geneticalgorithms4j.*;
 import java.io.PrintStream;
 
 public class Main {
@@ -47,8 +48,7 @@ public class Main {
         
         // run the genetic algorithm
         geneticAlgorithm.run();
-
-
+        
     }
 }
 ```
