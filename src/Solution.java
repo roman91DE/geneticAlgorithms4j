@@ -50,6 +50,11 @@ public class Solution {
         }
         return this.fitness;
     }
+
+    public boolean fitnessIsComputed() {
+        return this.fitness != null;
+    }
+
     public int getMinValue() {
         return this.minValue;
     }

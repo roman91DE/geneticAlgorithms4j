@@ -1,6 +1,7 @@
 import java.util.Arrays;
 
 public class Population {
+
     private final Solution[] solutions;
 
     public Population(int size, int minValue, int maxValue, int length) {
@@ -12,6 +13,10 @@ public class Population {
 
     public Population(Solution[] solutions) {
         this.solutions = solutions;
+    }
+
+    public Solution[] getSolutions() {
+        return solutions;
     }
 
     public void sortPopulation() {
@@ -27,4 +32,37 @@ public class Population {
     public int getSize() {
         return this.solutions.length;
     }
+
+    public int computeMissingFits(FitnessFunction fitnessFunction) {
+        int numberOfFitnessEvaluations = 0;
+        for (Solution solution : this.solutions) {
+            if (!solution.fitnessIsComputed()) {
+                solution.computeFitness(fitnessFunction);
+                numberOfFitnessEvaluations++;
+            }
+        }
+        return numberOfFitnessEvaluations;
+    }
+
+    public double getAverageFitness() {
+        double sum = 0;
+        for (Solution solution : this.solutions) {
+            sum += solution.getFitness();
+        }
+        return sum / this.solutions.length;
+    }
+
+    public double getStdDeviationFitness() {
+        double average = this.getAverageFitness();
+        double sum = 0;
+        for (Solution solution : this.solutions) {
+            sum += Math.pow(solution.getFitness() - average, 2);
+        }
+        return Math.sqrt(sum / this.solutions.length);
+    }
+
+    public double getBestFitness() {
+        return this.solutions[0].getFitness();
+    }
+
 }
