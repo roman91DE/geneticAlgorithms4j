@@ -76,7 +76,9 @@ public class Solution {
         }
         sb.deleteCharAt(sb.length() - 1);
         sb.append("]\n");
-        sb.append("Fitness=").append(this.fitness.toString());
+        if (this.fitness != null) {
+            sb.append("Fitness=").append(this.fitness.toString());
+        }
         return sb.toString();
     }
 

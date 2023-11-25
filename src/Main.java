@@ -3,15 +3,15 @@ import java.io.PrintStream;
 public class Main {
     public static void main(String[] args) {
 
-        int populationSize = 1000;
-        int chromosomeLength = 50;
-        int minValue = 0;
-        int maxValue = 1;
-        FitnessFunction fitnessFunction = new OneMaxFitness();
+        int populationSize = 50;
+        int chromosomeLength = 10;
+        int minValue = 1;
+        int maxValue = 2;
+        FitnessFunction fitnessFunction = new ExternalFitnessFunction("/usr/bin/python3", "./src/fitnessFunction.py");
         SelectionOperator selectionOperator = new TournamentSelection(2);
         CrossoverOperator crossoverOperator = new NPointCrossover(2, 0.8d);
         MutationOperator mutationOperator = new RandomMutation(0.05d);
-        TerminationCondition terminationCondition = new MaxNumberOfFitnessEvaluations(1_000_000);
+        TerminationCondition terminationCondition = new MaxNumberOfFitnessEvaluations(1_000);
         PrintStream outputStream = System.out;
 
 
