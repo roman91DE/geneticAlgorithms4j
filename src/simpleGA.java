@@ -15,31 +15,39 @@ public class simpleGA implements GeneticAlgorithm{
     private final CrossoverOperator crossoverOperator;
     private final MutationOperator mutationOperator;
     private final TerminationCondition terminationCondition;
-    private Population population;
-    private Solution bestSolution;
+    private Solution bestSolution, prototypeSolution;
     private int currentGeneration;
     private int numberOfFitnessEvaluations;
     public simpleGA(
             int populationSize,
-            int chromosomeLength,
-            int minValue,
-            int maxValue,
+            Solution prototypeSolution,
             FitnessFunction fitnessFunction,
             SelectionOperator selectionOperator,
             CrossoverOperator crossoverOperator,
             MutationOperator mutationOperator,
             TerminationCondition terminationCondition,
             PrintStream outputStream) {
+
+        if (prototypeSolution instanceof PermutationSolution) {
+            if (!crossoverOperator.permutationIsPreserved()) {
+                throw new IllegalArgumentException("Crossover operator does not preserve permutation");
+            }
+            if (!mutationOperator.permutationIsPreserved()) {
+                throw new IllegalArgumentException("Mutation operator does not preserve permutation");
+            }
+        }
+
         this.populationSize = populationSize;
-        this.chromosomeLength = chromosomeLength;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+        this.chromosomeLength = prototypeSolution.getLength();
+        this.minValue = prototypeSolution.getMinValue();
+        this.maxValue = prototypeSolution.getMaxValue();
         this.fitnessFunction = fitnessFunction;
         this.selectionOperator = selectionOperator;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
         this.terminationCondition = terminationCondition;
         this.bestSolution = null;
+        this.prototypeSolution = prototypeSolution;
         if (outputStream != null) {
             this.outputStream = outputStream;
         }
@@ -59,22 +67,23 @@ public class simpleGA implements GeneticAlgorithm{
 
     @Override
     public void run() {
-        this.population = new Population(this.populationSize, this.minValue, this.maxValue, this.chromosomeLength);
+
+        Population population = new Population(this.populationSize, prototypeSolution);
         this.outputStream.println("Generation\tNumFitnessEvals\tBestFitness\tAverageFitness\tStandardDeviation");
 
         while (!this.terminationCondition.isTerminated(this)) {
 
             this.currentGeneration++;
-            this.numberOfFitnessEvaluations += this.population.computeMissingFits(this.fitnessFunction);
-            this.population.sortPopulation();
+            this.numberOfFitnessEvaluations += population.computeMissingFits(this.fitnessFunction);
+            population.sortPopulation();
 
-            if (this.bestSolution == null || this.population.getSolution(0).getFitness() > this.bestSolution.getFitness()) {
-                this.bestSolution = this.population.getSolution(0);
+            if (this.bestSolution == null || population.getSolution(0).getFitness() > this.bestSolution.getFitness()) {
+                this.bestSolution = population.getSolution(0);
             }
 
-            this.outputStream.println(this.currentGeneration + "\t" + this.numberOfFitnessEvaluations + "\t" + this.population.getBestFitness() + "\t" + this.population.getAverageFitness() + "\t" + this.population.getStdDeviationFitness());
+            this.outputStream.println(this.currentGeneration + "\t" + this.numberOfFitnessEvaluations + "\t" + population.getBestFitness() + "\t" + population.getAverageFitness() + "\t" + population.getStdDeviationFitness());
 
-            Population breedingPopulation = selectionOperator.select(this.population, this.populationSize);
+            Population breedingPopulation = selectionOperator.select(population, this.populationSize);
             Solution[] offspringSolutions = new Solution[this.populationSize];
 
             for (int i = 0; i < this.populationSize; i++) {
@@ -91,10 +100,10 @@ public class simpleGA implements GeneticAlgorithm{
                 mutationOperator.mutate(child);
                 offspringSolutions[i] = child;
                 }
-            this.population = new Population(offspringSolutions);
+            population = new Population(offspringSolutions);
             }
-        this.population.computeMissingFits(this.fitnessFunction);
-        this.population.sortPopulation();
+        population.computeMissingFits(this.fitnessFunction);
+        population.sortPopulation();
 
         this.outputStream.println(this.bestSolution.toString());
         }

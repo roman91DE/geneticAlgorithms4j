@@ -18,6 +18,11 @@ public class NPointCrossover implements CrossoverOperator {
     }
 
     @Override
+    public boolean permutationIsPreserved() {
+        return false;
+    }
+
+    @Override
     public Solution crossover(Solution parent1, Solution parent2) throws IllegalArgumentException {
 
         if (!this.checkCompatibility(parent1, parent2)) {

@@ -4,10 +4,17 @@ public class Population {
 
     private final Solution[] solutions;
 
-    public Population(int size, int minValue, int maxValue, int length) {
+    public Population(int size, Solution prototypeSolution) {
         this.solutions = new Solution[size];
-        for (int i = 0; i < size; i++) {
-            this.solutions[i] = new Solution(minValue, maxValue, length);
+
+        if (prototypeSolution instanceof PermutationSolution) {
+            for (int i = 0; i < size; i++) {
+                this.solutions[i] = new PermutationSolution(prototypeSolution.getMinValue(), prototypeSolution.getMaxValue(), prototypeSolution.getLength());
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                this.solutions[i] = new Solution(prototypeSolution.getMinValue(), prototypeSolution.getMaxValue(), prototypeSolution.getLength());
+            }
         }
     }
 

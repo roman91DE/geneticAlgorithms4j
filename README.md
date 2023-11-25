@@ -17,10 +17,8 @@ import java.io.PrintStream;
 public class Main {
     public static void main(String[] args) {
         
-        // define the 3 basic components that describe a candidate solution
-        int chromosomeLength = 50;
-        int minValue = 0;
-        int maxValue = 1;
+        // provide a prototype solution
+        Solution prototypeSolution = new Solution(0, 1, 10);
         // define the size of the population
         int populationSize = 1000;
         // define the fitness function
@@ -36,9 +34,7 @@ public class Main {
         // create the genetic algorithm from the components
         GeneticAlgorithm geneticAlgorithm = new simpleGA(
                 populationSize,
-                chromosomeLength,
-                minValue,
-                maxValue,
+                prototypeSolution,
                 fitnessFunction,
                 selectionOperator,
                 crossoverOperator,
@@ -78,9 +74,7 @@ public class Main {
 
         GeneticAlgorithm geneticAlgorithm = new simpleGA(
                 populationSize,
-                chromosomeLength,
-                minValue,
-                maxValue,
+                prototypeSolution,
                 fitnessFunction,
                 selectionOperator,
                 crossoverOperator,
@@ -130,4 +124,45 @@ if __name__ == "__main__":
     stdout.write(str(return_value))
     stdout.write('\n')
     stdout.flush()
+```
+
+### Permutation-based genetic algorithms
+
+Often the solution to a problem is a permutation of a set of elements. 
+For example, the solution to the travelling salesman problem is a permutation of the cities to visit. 
+The library provides a set of components to easily implement permutation-based genetic algorithms as shown in the following example.
+
+```java
+import java.io.PrintStream;
+
+public class Main {
+    public static void main(String[] args) {
+
+        int populationSize = 50;
+        // Use the PermutationSolution subclass instead of the Solution class
+        Solution prototypeSolution = new PermutationSolution(0, 9, 10);
+        FitnessFunction fitnessFunction = new OneMaxFitness();
+        SelectionOperator selectionOperator = new TournamentSelection(2);
+        // use instances of CrossOverOperator and MutationOperator that work with permutations
+        CrossoverOperator crossoverOperator = new OrderCrossover(0.8d);
+        MutationOperator mutationOperator = new SwapMutation(0.05d);
+        TerminationCondition terminationCondition = new MaxNumberOfFitnessEvaluations(1_000);
+        PrintStream outputStream = System.out;
+
+
+        GeneticAlgorithm geneticAlgorithm = new simpleGA(
+                populationSize,
+                prototypeSolution,
+                fitnessFunction,
+                selectionOperator,
+                crossoverOperator,
+                mutationOperator,
+                terminationCondition,
+                outputStream);
+
+        geneticAlgorithm.run();
+
+
+    }
+}
 ```

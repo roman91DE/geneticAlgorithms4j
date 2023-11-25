@@ -44,6 +44,10 @@ public class Solution {
         return this.chromosome;
     }
 
+    public void setChromosome(int[] chromosome) {
+        System.arraycopy(chromosome, 0, this.chromosome, 0, chromosome.length);
+    }
+
     public double getFitness() throws IllegalStateException{
         if (this.fitness == null) {
             throw new IllegalStateException("Fitness has not been computed yet");

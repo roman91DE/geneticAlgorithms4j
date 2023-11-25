@@ -5,7 +5,13 @@ public class RandomMutation implements MutationOperator{
     private final double mutationRate;
 
     public RandomMutation(double mutationRate) {
+
         this.mutationRate = mutationRate;
+    }
+
+    @Override
+    public boolean permutationIsPreserved() {
+        return false;
     }
 
     @Override

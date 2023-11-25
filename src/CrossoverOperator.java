@@ -1,6 +1,8 @@
 public interface CrossoverOperator {
     public Solution crossover(Solution parent1, Solution parent2) throws IllegalArgumentException;
 
+    public boolean permutationIsPreserved();
+
     default public boolean checkCompatibility(Solution parent1, Solution parent2){
         if (parent1.getChromosome().length != parent2.getChromosome().length)
             return false;
