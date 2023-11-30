@@ -6,4 +6,5 @@ public interface GeneticAlgorithm {
     public void run();
     public int getCurrentGeneration();
     public int getNumberOfFitnessEvaluations();
+    public void plotEvolution();
 }

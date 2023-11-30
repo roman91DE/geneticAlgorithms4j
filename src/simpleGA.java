@@ -8,6 +8,7 @@ public class simpleGA implements GeneticAlgorithm{
     private final int maxValue;
     private PrintStream outputStream;
     private final Random random = new Random();
+    private final Stats stats = new Stats();
 
 
     private final FitnessFunction fitnessFunction;
@@ -18,6 +19,7 @@ public class simpleGA implements GeneticAlgorithm{
     private Solution bestSolution, prototypeSolution;
     private int currentGeneration;
     private int numberOfFitnessEvaluations;
+    private Population population;
     public simpleGA(
             int populationSize,
             Solution prototypeSolution,
@@ -48,6 +50,7 @@ public class simpleGA implements GeneticAlgorithm{
         this.terminationCondition = terminationCondition;
         this.bestSolution = null;
         this.prototypeSolution = prototypeSolution;
+        this.population = null;
         if (outputStream != null) {
             this.outputStream = outputStream;
         }
@@ -66,15 +69,30 @@ public class simpleGA implements GeneticAlgorithm{
     }
 
     @Override
+    public void plotEvolution() {
+        this.stats.plotEvolution();
+    }
+
+    private void logStats() {
+        this.stats.numberOfGenerations.add(this.currentGeneration);
+        this.stats.numberOfFitnessEvaluations.add(this.numberOfFitnessEvaluations);
+        this.stats.bestFits.add(population.getBestFitness());
+        this.stats.averageFits.add(population.getAverageFitness());
+        this.stats.stdDevFits.add(population.getStdDeviationFitness());
+    }
+
+    @Override
     public void run() {
 
-        Population population = new Population(this.populationSize, prototypeSolution);
+        this.population = new Population(this.populationSize, prototypeSolution);
         this.outputStream.println("Generation\tNumFitnessEvals\tBestFitness\tAverageFitness\tStandardDeviation");
 
         while (!this.terminationCondition.isTerminated(this)) {
 
             this.currentGeneration++;
+
             this.numberOfFitnessEvaluations += population.computeMissingFits(this.fitnessFunction);
+
             population.sortPopulation();
 
             if (this.bestSolution == null || population.getSolution(0).getFitness() > this.bestSolution.getFitness()) {
@@ -82,6 +100,8 @@ public class simpleGA implements GeneticAlgorithm{
             }
 
             this.outputStream.println(this.currentGeneration + "\t" + this.numberOfFitnessEvaluations + "\t" + population.getBestFitness() + "\t" + population.getAverageFitness() + "\t" + population.getStdDeviationFitness());
+            this.logStats();
+
 
             Population breedingPopulation = selectionOperator.select(population, this.populationSize);
             Solution[] offspringSolutions = new Solution[this.populationSize];
@@ -106,5 +126,6 @@ public class simpleGA implements GeneticAlgorithm{
         population.sortPopulation();
 
         this.outputStream.println(this.bestSolution.toString());
+        this.stats.plotEvolution();
         }
     }
