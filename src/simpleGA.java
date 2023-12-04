@@ -126,6 +126,5 @@ public class simpleGA implements GeneticAlgorithm{
         population.sortPopulation();
 
         this.outputStream.println(this.bestSolution.toString());
-        this.stats.plotEvolution();
         }
     }

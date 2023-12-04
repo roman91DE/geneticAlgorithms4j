@@ -1,4 +1,5 @@
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
@@ -24,6 +25,32 @@ public class Stats {
     }
 
     public void plotEvolution() {
+        XYSeriesCollection dataset = getXySeriesCollection();
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Evolution",
+                "Generation",
+                "Fitness",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+
+
+        // Save chart as PNG
+        try  {
+            File file = new File("evolution.png");
+            ChartUtilities.saveChartAsPNG(file, chart, 800, 600);
+        } catch (Exception e) {
+            System.out.println("Error while saving chart as PNG");
+        }
+
+
+    }
+
+    private XYSeriesCollection getXySeriesCollection() {
         XYSeries bestFitSeries = new XYSeries("Best Fit");
         for (int i = 0; i < bestFits.size(); i++) {
             bestFitSeries.add(i, bestFits.get(i));
@@ -43,28 +70,7 @@ public class Stats {
         dataset.addSeries(bestFitSeries);
         dataset.addSeries(averageFitSeries);
         dataset.addSeries(stdDevFitSeries);
-
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                "Evolution",
-                "Generation",
-                "Fitness",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-
-
-        // Save chart as PNG
-        try {
-            File file = new File("evolution.png");
-            org.jfree.chart.ChartUtils.saveChartAsPNG(file, chart, 800, 600);
-        } catch (Exception e) {
-            System.out.println("Error while saving chart as PNG");
-        }
-
-
+        return dataset;
     }
 
 }
