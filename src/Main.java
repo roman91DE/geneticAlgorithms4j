@@ -24,7 +24,7 @@ public class Main {
                 outputStream);
 
         geneticAlgorithm.run();
-        //geneticAlgorithm.plotEvolution();
+
 
 
     }
